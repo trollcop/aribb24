@@ -1,5 +1,5 @@
 /*****************************************************************************
- * convtable.h : table for converting ARIB STD-B24 JIS 8bit character code 
+ * convtable.h : table for converting ARIB STD-B24 JIS 8bit character code
  *****************************************************************************
  * Copyright (C) 2014 Naohiro KORIYAMA
  *
@@ -165,19 +165,19 @@ static const unsigned int decoder_kanji_table[][94] = {
         0x2517, 0x2523, 0x2533, 0x252b, 0x253b, 0x254b, 0x2520, 0x252f,
         0x2528, 0x2537, 0x253f, 0x251d, 0x2530, 0x2525, 0x2538, 0x2542,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
     {
         0x4e9c, 0x5516, 0x5a03, 0x963f, 0x54c0, 0x611b, 0x6328, 0x59f6,
@@ -1151,11 +1151,11 @@ static const unsigned int decoder_kanji_table[][94] = {
         0x9321, 0x9348, 0x9592, 0x96de, 0x9903, 0x9940, 0x9ad9, 0x9bd6,
         0x9dd7, 0x9eb4, 0x9eb5,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
-    {
+    { 0,
     },
     {
         0xe0c9, 0xe0ca, 0xe0cb, 0xe0cc, 0xe0cd, 0xe0ce, 0x0000, 0xe0d0,

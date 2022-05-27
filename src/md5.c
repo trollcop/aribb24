@@ -34,6 +34,10 @@
  * "message digest"    F9 6B 69 7D 7C B7 93 8D  52 5A 2F 31 AA F1 61 D0
  */
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -295,14 +299,14 @@ md5_final( void *context)
       memset(hd->buf, 0, 56 ); /* fill next block with zeroes */
     }
   /* append the 64 bit count */
-  hd->buf[56] = lsb	   ;
-  hd->buf[57] = lsb >>  8;
-  hd->buf[58] = lsb >> 16;
-  hd->buf[59] = lsb >> 24;
-  hd->buf[60] = msb	   ;
-  hd->buf[61] = msb >>  8;
-  hd->buf[62] = msb >> 16;
-  hd->buf[63] = msb >> 24;
+  hd->buf[56] = (uint8_t)lsb;
+  hd->buf[57] = (uint8_t)(lsb >>  8);
+  hd->buf[58] = (uint8_t)(lsb >> 16);
+  hd->buf[59] = (uint8_t)(lsb >> 24);
+  hd->buf[60] = (uint8_t)msb;
+  hd->buf[61] = (uint8_t)(msb >>  8);
+  hd->buf[62] = (uint8_t)(msb >> 16);
+  hd->buf[63] = (uint8_t)(msb >> 24);
   transform( hd, hd->buf );
 
   p = hd->buf;

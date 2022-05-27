@@ -24,7 +24,11 @@
 #ifndef VLC_BITS_H
 #define VLC_BITS_H 1
 
+#ifndef _MSC_VER
 #include <unistd.h>
+#else
+typedef int32_t ssize_t;
+#endif
 /**
  * \file
  * This file defines functions, structures for handling streams of bits in vlc
@@ -41,7 +45,7 @@ typedef struct bs_s
 
 static inline void bs_init( bs_t *s, const void *p_data, size_t i_data )
 {
-    s->p_start = (void *)p_data;
+    s->p_start = (uint8_t *)p_data;
     s->p       = s->p_start;
     s->p_end   = s->p_start + i_data;
     s->i_left  = 8;
@@ -49,7 +53,7 @@ static inline void bs_init( bs_t *s, const void *p_data, size_t i_data )
 
 static inline int bs_pos( const bs_t *s )
 {
-    return( 8 * ( s->p - s->p_start ) + 8 - s->i_left );
+    return (int)( 8 * ( s->p - s->p_start ) + 8 - s->i_left );
 }
 
 static inline int bs_eof( const bs_t *s )

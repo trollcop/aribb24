@@ -55,15 +55,15 @@ static void parse_data_unit_statement_body( arib_parser_t *p_parser, bs_t *p_bs,
                                             uint8_t i_data_unit_parameter,
                                             uint32_t i_data_unit_size )
 {
-    char* p_data_unit_data_byte = (char*) calloc(
-            i_data_unit_size + 1, sizeof(char) );
+    (void)i_data_unit_parameter;
+    char* p_data_unit_data_byte = (char*) calloc(i_data_unit_size + 1, sizeof(char) );
     if( p_data_unit_data_byte == NULL )
     {
         return;
     }
     for( uint32_t i = 0; i < i_data_unit_size; i++ )
     {
-        p_data_unit_data_byte[i] = bs_read( p_bs, 8 );
+        p_data_unit_data_byte[i] = (char)bs_read( p_bs, 8 );
         p_parser->i_data_unit_size += 1;
     }
     p_data_unit_data_byte[i_data_unit_size] = '\0';
@@ -75,11 +75,11 @@ static void parse_data_unit_statement_body( arib_parser_t *p_parser, bs_t *p_bs,
     free( p_data_unit_data_byte );
 }
 
-static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
-                                  uint8_t i_data_unit_parameter,
-                                  uint32_t i_data_unit_size )
+static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs, uint8_t i_data_unit_parameter, uint32_t i_data_unit_size )
 {
     p_parser->p_instance->p->i_drcs_num = 0;
+    (void)i_data_unit_size;
+    (void)i_data_unit_parameter;
 #ifdef ARIBSUB_GEN_DRCS_DATA
     if( p_parser->p_drcs_data != NULL )
     {
@@ -104,7 +104,7 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
     }
 #endif //ARIBSUB_GEN_DRCS_DATA
 
-    int8_t i_NumberOfCode = bs_read( p_bs, 8 );
+    int8_t i_NumberOfCode = (int8_t)bs_read( p_bs, 8 );
     p_parser->i_data_unit_size += 1;
 
 #ifdef ARIBSUB_GEN_DRCS_DATA
@@ -121,7 +121,7 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
     {
         bs_skip( p_bs, 16 ); /* i_character_code */
         p_parser->i_data_unit_size += 2;
-        uint8_t i_NumberOfFont = bs_read( p_bs, 8 );
+        uint8_t i_NumberOfFont = (uint8_t)bs_read( p_bs, 8 );
         p_parser->i_data_unit_size += 1;
 
 #ifdef ARIBSUB_GEN_DRCS_DATA
@@ -140,7 +140,7 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
         for( int j = 0; j < i_NumberOfFont; j++ )
         {
             bs_skip( p_bs, 4 ); /* i_fontID */
-            uint8_t i_mode = bs_read( p_bs, 4 );
+            uint8_t i_mode = (uint8_t)bs_read( p_bs, 4 );
             p_parser->i_data_unit_size += 1;
 
 #ifdef ARIBSUB_GEN_DRCS_DATA
@@ -155,14 +155,14 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
 
             if( i_mode == 0x00 || i_mode == 0x01 )
             {
-                uint8_t i_depth = bs_read( p_bs, 8 );
+                uint8_t i_depth = (uint8_t)bs_read( p_bs, 8 );
                 p_parser->i_data_unit_size += 1;
-                uint8_t i_width = bs_read( p_bs, 8 );
+                uint8_t i_width = (uint8_t)bs_read( p_bs, 8 );
                 p_parser->i_data_unit_size += 1;
-                uint8_t i_height = bs_read( p_bs, 8 );
+                uint8_t i_height = (uint8_t)bs_read( p_bs, 8 );
                 p_parser->i_data_unit_size += 1;
 
-                int i_bits_per_pixel = ceil( sqrt( ( i_depth + 2 ) ) );
+                int i_bits_per_pixel = (int)ceil( sqrt( ( i_depth + 2 ) ) );
 
 #ifdef ARIBSUB_GEN_DRCS_DATA
                 drcs_pattern_data_t* p_drcs_pattern_data =
@@ -195,7 +195,7 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
 
                 for( int k = 0; k < i_width * i_height * i_bits_per_pixel / 8; k++ )
                 {
-                    uint8_t i_patternData = bs_read( p_bs, 8 );
+                    uint8_t i_patternData = (uint8_t)bs_read( p_bs, 8 );
                     p_parser->i_data_unit_size += 1;
 #ifdef ARIBSUB_GEN_DRCS_DATA
                     p_drcs_pattern_data->p_patternData[k] = i_patternData;
@@ -219,7 +219,7 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
                 p_parser->i_data_unit_size += 1;
                 bs_skip( p_bs, 8 ); /* i_regionY */
                 p_parser->i_data_unit_size += 1;
-                uint16_t i_geometricData_length = bs_read( p_bs, 16 );
+                uint16_t i_geometricData_length = (uint16_t)bs_read( p_bs, 16 );
                 p_parser->i_data_unit_size += 2;
 
 #ifdef ARIBSUB_GEN_DRCS_DATA
@@ -258,10 +258,9 @@ static void parse_data_unit_DRCS( arib_parser_t *p_parser, bs_t *p_bs,
     }
 }
 
-static void parse_data_unit_others( arib_parser_t *p_parser, bs_t *p_bs,
-                                    uint8_t i_data_unit_parameter,
-                                    uint32_t i_data_unit_size )
+static void parse_data_unit_others( arib_parser_t *p_parser, bs_t *p_bs, uint8_t i_data_unit_parameter, uint32_t i_data_unit_size )
 {
+    (void)i_data_unit_parameter;
     for( uint32_t i = 0; i < i_data_unit_size; i++ )
     {
         bs_skip( p_bs, 8 );
@@ -276,15 +275,15 @@ static void parse_data_unit_others( arib_parser_t *p_parser, bs_t *p_bs,
  *****************************************************************************/
 static void parse_data_unit( arib_parser_t *p_parser, bs_t *p_bs )
 {
-    uint8_t i_unit_separator = bs_read( p_bs, 8 );
+    uint8_t i_unit_separator = (uint8_t)bs_read( p_bs, 8 );
     p_parser->i_data_unit_size += 1;
     if( i_unit_separator != 0x1F )
     {
         return;
     }
-    uint8_t i_data_unit_parameter = bs_read( p_bs, 8 );
+    uint8_t i_data_unit_parameter = (uint8_t)bs_read( p_bs, 8 );
     p_parser->i_data_unit_size += 1;
-    uint32_t i_data_unit_size = bs_read( p_bs, 24 );
+    uint32_t i_data_unit_size = (uint8_t)bs_read( p_bs, 24 );
     p_parser->i_data_unit_size += 3;
     if( i_data_unit_parameter == 0x20 )
     {
@@ -314,7 +313,7 @@ static void parse_data_unit( arib_parser_t *p_parser, bs_t *p_bs )
  *****************************************************************************/
 static void parse_caption_management_data( arib_parser_t *p_parser, bs_t *p_bs )
 {
-    uint8_t i_TMD = bs_read( p_bs, 2 );
+    uint8_t i_TMD = (uint8_t)bs_read( p_bs, 2 );
     bs_skip( p_bs, 6 ); /* Reserved */
     if( i_TMD == 0x02 /* 10 */ )
     {
@@ -322,12 +321,12 @@ static void parse_caption_management_data( arib_parser_t *p_parser, bs_t *p_bs )
         bs_skip( p_bs, 4 ); /* OTM & 15 */
         bs_skip( p_bs, 4 ); /* Reserved */
     }
-    uint8_t i_num_languages = bs_read( p_bs, 8 );
+    uint8_t i_num_languages = (uint8_t)bs_read( p_bs, 8 );
     for( int i = 0; i < i_num_languages; i++ )
     {
         bs_skip( p_bs, 3 ); /* i_language_tag */
         bs_skip( p_bs, 1 ); /* Reserved */
-        uint8_t i_DMF = bs_read( p_bs, 4 );
+        uint8_t i_DMF = (uint8_t)bs_read( p_bs, 4 );
         if( i_DMF == 0x0C /* 1100 */ ||
             i_DMF == 0x0D /* 1101 */ ||
             i_DMF == 0x0E /* 1110 */ )
@@ -362,7 +361,7 @@ static void parse_caption_management_data( arib_parser_t *p_parser, bs_t *p_bs )
  *****************************************************************************/
 static void parse_caption_statement_data( arib_parser_t *p_parser, bs_t *p_bs )
 {
-    uint8_t i_TMD = bs_read( p_bs, 2 );
+    uint8_t i_TMD = (uint8_t)bs_read( p_bs, 2 );
     bs_skip( p_bs, 6 ); /* Reserved */
     if( i_TMD == 0x01 /* 01 */ || i_TMD == 0x02 /* 10 */ )
     {
@@ -370,7 +369,7 @@ static void parse_caption_statement_data( arib_parser_t *p_parser, bs_t *p_bs )
         bs_skip( p_bs, 4 ); /* STM & 15 */
         bs_skip( p_bs, 4 ); /* Reserved */
     }
-    uint32_t i_data_unit_loop_length = bs_read( p_bs, 24 );
+    uint32_t i_data_unit_loop_length = (uint8_t)bs_read( p_bs, 24 );
     free( p_parser->psz_subtitle_data );
     p_parser->i_subtitle_data_size = 0;
     p_parser->psz_subtitle_data = NULL;
@@ -392,9 +391,9 @@ static void parse_caption_statement_data( arib_parser_t *p_parser, bs_t *p_bs )
  *****************************************************************************/
 static void parse_data_group( arib_parser_t *p_parser, bs_t *p_bs )
 {
-    uint8_t i_data_group_id = bs_read( p_bs, 6 );
+    uint8_t i_data_group_id = (uint8_t)bs_read( p_bs, 6 );
     bs_skip( p_bs, 2 ); /* i_data_group_version */
-    bs_skip( p_bs, 8 ); /* i_data_group_link_number */ 
+    bs_skip( p_bs, 8 ); /* i_data_group_link_number */
     bs_skip( p_bs, 8 ); /* i_last_data_group_link_number */
     bs_skip( p_bs, 16 ); /* i_data_group_size */
 
@@ -417,18 +416,18 @@ void arib_parse_pes( arib_parser_t *p_parser, const void *p_data, size_t i_data 
 {
     bs_t bs;
     bs_init( &bs, p_data, i_data );
-    uint8_t i_data_group_id = bs_read( &bs, 8 );
+    uint8_t i_data_group_id = (uint8_t)bs_read( &bs, 8 );
     if( i_data_group_id != 0x80 && i_data_group_id != 0x81 )
     {
         return;
     }
-    uint8_t i_private_stream_id = bs_read( &bs, 8 );
+    uint8_t i_private_stream_id = (uint8_t)bs_read( &bs, 8 );
     if( i_private_stream_id != 0xFF )
     {
         return;
     }
     bs_skip( &bs, 4 ); /* reserved */
-    uint8_t i_PES_data_packet_header_length= bs_read( &bs, 4 );
+    uint8_t i_PES_data_packet_header_length= (uint8_t)bs_read( &bs, 4 );
 
      /* skip PES_data_private_data_byte */
     bs_skip( &bs, i_PES_data_packet_header_length );

@@ -26,3 +26,7 @@
 /missing
 /src/aribb24.pc
 /stamp-h1
+.vs/
+Debug/
+Release/
+*.user

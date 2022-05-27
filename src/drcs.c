@@ -24,7 +24,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <math.h>
 #include <ctype.h>

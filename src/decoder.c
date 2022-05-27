@@ -180,7 +180,7 @@ static int u8_uctomb_aux( unsigned char *s, unsigned int uc, int n )
         case 4: s[3] = 0x80 | (uc & 0x3f); uc = uc >> 6; uc |= 0x10000;
         case 3: s[2] = 0x80 | (uc & 0x3f); uc = uc >> 6; uc |= 0x800;
         case 2: s[1] = 0x80 | (uc & 0x3f); uc = uc >> 6; uc |= 0xc0;
-        case 1: s[0] = uc;
+        case 1: s[0] = (unsigned char)uc;
     }
     return count;
 }
@@ -189,7 +189,7 @@ static int u8_uctomb( unsigned char *s, unsigned int uc, int n )
 {
     if( uc < 0x80 && n > 0 )
     {
-        s[0] = uc;
+        s[0] = (unsigned char)uc;
         return 1;
     }
     else
@@ -374,7 +374,7 @@ static int decoder_push( arib_decoder_t *decoder, unsigned int uc )
             break;
     }
 
-    int i_cnt = u8_uctomb( (unsigned char*)decoder->ubuf, uc, decoder->ucount );
+    int i_cnt = u8_uctomb( (unsigned char*)decoder->ubuf, uc, (int)decoder->ucount );
     if( i_cnt <= 0 )
     {
         return 0;
@@ -722,7 +722,6 @@ static int decoder_handle_c0( arib_decoder_t *decoder, int c )
             return 1;
         case 0x16: //PAPF
             return decoder_handle_papf( decoder );
-            return 1;
         case 0x18: //CAN
             return 1;
         case 0x19: //SS2
@@ -1139,9 +1138,10 @@ static int decoder_handle_time( arib_decoder_t *decoder )
                     return 1;
                 break;
             default:
-                if( i_mode == 1 && c >= 0x40 && c <= 0x7F )
+                if (i_mode == 1 && c >= 0x40 && c <= 0x7F) {
                     decoder->i_control_time += c & 0x3f;
                     return 1;
+                }
                 return 0;
         }
         if( i_mode == 0 )
@@ -1259,8 +1259,8 @@ static int decoder_handle_default_macro( arib_decoder_t *decoder, int c )
     c=c+0x21;
     if( c >= 0x60 && c <= 0x6f )
     {
-        const unsigned char* macro;
-        int size;
+        const unsigned char* macro = NULL;
+        int size = 0;
         switch( c )
         {
             case 0x60:

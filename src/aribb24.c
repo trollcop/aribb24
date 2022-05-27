@@ -35,6 +35,10 @@
 #include "aribb24/decoder.h"
 #include "decoder_private.h"
 
+#ifdef _MSC_VER
+#define strdup _strdup
+#endif
+
 void arib_log( arib_instance_t *p_instance, const char *psz_format, ... )
 {
 #ifdef HAVE_VASPRINTF
@@ -57,6 +61,9 @@ void arib_log( arib_instance_t *p_instance, const char *psz_format, ... )
         // vprintf ?
     }
     va_end( args );
+#else
+    (void)p_instance;
+    (void)psz_format;
 #endif
 }
 
@@ -79,9 +86,9 @@ arib_instance_t * arib_instance_new( void *p_opaque )
 void arib_instance_destroy( arib_instance_t *p_instance )
 {
     if ( p_instance->p->p_decoder )
-        arib_decoder_free( p_instance->p->p_decoder ); 
+        arib_decoder_free( p_instance->p->p_decoder );
     if ( p_instance->p->p_parser )
-        arib_parser_free( p_instance->p->p_parser ); 
+        arib_parser_free( p_instance->p->p_parser );
     free( p_instance->p->psz_base_path );
     free( p_instance->p->psz_last_error );
 
